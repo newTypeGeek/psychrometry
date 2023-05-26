@@ -81,6 +81,10 @@ def display_color(color):
         yaxis_title=dict(text="Humidity Ratio (kg/kg)", font=dict(size=18)),
         yaxis_range=[0, HUMIDITY_RATIO_MAX],
         yaxis_side="right",
+        legend=dict(
+            x=1.1,
+            font=dict(size=18),
+        ),
     )
 
     return fig
