@@ -6,7 +6,7 @@ import psy
 
 
 app = Dash(__name__)
-
+app.title = "Psychrometric Chart"
 
 app.layout = html.Div(
     [
@@ -54,7 +54,7 @@ def display_color(color):
     for rh, humitidy_ratios in RH_TO_HUMIDITY_RATIOS.items():
         # only show lines for every 10% RH
         if rh % 10 == 0:
-            line = None
+            line = dict(color="blueviolet")
             showlegend = True
         else:
             line = dict(color="rgba(0,0,0,0)")
