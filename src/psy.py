@@ -38,3 +38,18 @@ def vapor_pressure(w: float) -> float:
 
     """
     return w / (0.621945 + w) * 101325
+
+
+def relative_humidity(dry_bulb: float, w: float) -> float:
+    """
+    Calculate the relative humidity from dry bulb temperature and humidity ratio
+
+    Args:
+        dry_bulb: Dry bulb temperature, [°C]
+        w: Humidity ratio (vapor mass / dry air mass) [kg/kg]
+
+    Returns:
+        Relative humidity, [%]
+
+    """
+    return vapor_pressure(w) / saturated_vapor_pressure(dry_bulb) * 100
