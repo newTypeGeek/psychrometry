@@ -24,3 +24,17 @@ def saturated_vapor_pressure(dry_bulb: float) -> float:
     )
 
     return np.exp(log_p_sat)
+
+
+def vapor_pressure(w: float) -> float:
+    """
+    Calculate the vapor pressure from humidity ratio
+
+    Args:
+        w: Humidity ratio (vapor mass / dry air mass) [kg/kg]
+
+    Returns:
+        Vapor pressure, [Pa]
+
+    """
+    return w / (0.621945 + w) * 101325
