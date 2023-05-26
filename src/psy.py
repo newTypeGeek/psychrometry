@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def saturated_vapor_pressure(dry_bulb: float) -> float:
+def saturated_vapor_pressure(dry_bulb: np.ndarray) -> np.ndarray:
     """
     Calculate the saturated vapor pressure using Hyland and Wexler 1983 which is also recommended by ASHRAE
 
@@ -26,7 +26,7 @@ def saturated_vapor_pressure(dry_bulb: float) -> float:
     return np.exp(log_p_sat)
 
 
-def vapor_pressure(w: float) -> float:
+def vapor_pressure(w: np.ndarray) -> np.ndarray:
     """
     Calculate the vapor pressure from humidity ratio
 
@@ -40,7 +40,7 @@ def vapor_pressure(w: float) -> float:
     return w / (0.621945 + w) * 101325
 
 
-def relative_humidity(dry_bulb: float, w: float) -> float:
+def relative_humidity(dry_bulb: np.ndarray, w: np.ndarray) -> np.ndarray:
     """
     Calculate the relative humidity from dry bulb temperature and humidity ratio
 
