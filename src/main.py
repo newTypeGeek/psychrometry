@@ -27,6 +27,8 @@ DRY_BULB_MAX = 50
 
 DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.5)
 
+NUM_DATA_POINTS = len(DRY_BULBS)
+
 
 def generate_humidity_ratios() -> dict[float, np.ndarray]:
     rh_start = 1
@@ -51,8 +53,24 @@ def display_color(color):
 
     for rh, humitidy_ratios in RH_TO_HUMIDITY_RATIOS.items():
         # only show lines for every 10% RH
-        line = None if rh % 10 == 0 else dict(color="rgba(0,0,0,0)")
-        fig.add_trace(go.Scatter(x=DRY_BULBS, y=humitidy_ratios, showlegend=False, line=line))
+        if rh % 10 == 0:
+            line = None
+            showlegend = True
+        else:
+            line = dict(color="rgba(0,0,0,0)")
+            showlegend = False
+
+        fig.add_trace(
+            go.Scatter(
+                x=DRY_BULBS,
+                y=humitidy_ratios,
+                customdata=np.stack([[rh] * NUM_DATA_POINTS], axis=-1),
+                showlegend=showlegend,
+                line=line,
+                name="RH = {:.2f} %".format(rh),
+                hovertemplate=r"Dry Bulb: %{x:.2f} °C<br>RH: %{customdata[0]:.2f} %<br>",
+            )
+        )
 
     fig.update_layout(
         autosize=True,
