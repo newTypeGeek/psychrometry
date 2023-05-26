@@ -7,6 +7,7 @@ GAS_CONSTANT_RATIO = 0.621945  # R_d / R_v
 def saturated_vapor_pressure(dry_bulb: np.ndarray) -> np.ndarray:
     """
     Calculate the saturated vapor pressure using Hyland and Wexler 1983 which is also recommended by ASHRAE
+    WARNING: This is only valid for temperatures between -100 °C and 200 °C at atmospheric pressure
 
     Args:
         dry_bulb: Dry bulb temperature, [°C]
