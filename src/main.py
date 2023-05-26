@@ -67,8 +67,8 @@ def display_color(color):
                 customdata=np.stack([[rh] * NUM_DATA_POINTS], axis=-1),
                 showlegend=showlegend,
                 line=line,
-                name="RH = {:.2f} %".format(rh),
-                hovertemplate=r"Dry Bulb: %{x:.2f} °C<br>RH: %{customdata[0]:.2f} %<br><extra></extra>",
+                name="RH = {:.0f} %".format(rh),
+                hovertemplate=r"Dry Bulb: %{x:.1f} °C<br>RH: %{customdata[0]:.1f} %<br><extra></extra>",
             )
         )
 
