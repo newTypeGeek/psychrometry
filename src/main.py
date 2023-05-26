@@ -77,10 +77,14 @@ def display_color(color):
         height=900,
         # paper_bgcolor="LightSteelBlue",
         title=dict(text=f"Psychrometric Chart (P = {psy.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=36)),
-        xaxis_title=dict(text="Dry Bulb Temperature (°C)", font=dict(size=18)),
-        yaxis_title=dict(text="Humidity Ratio (kg/kg)", font=dict(size=18)),
-        yaxis_range=[0, HUMIDITY_RATIO_MAX],
-        yaxis_side="right",
+        xaxis=dict(
+            title=dict(text="Dry Bulb Temperature (°C)", font=dict(size=18)),
+        ),
+        yaxis=dict(
+            title=dict(text="Humidity Ratio (kg/kg)", font=dict(size=18)),
+            range=[0, HUMIDITY_RATIO_MAX],
+            side="right",
+        ),
         legend=dict(
             x=1.1,
             font=dict(size=18),
