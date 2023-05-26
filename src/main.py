@@ -25,7 +25,7 @@ app.layout = html.Div(
 HUMIDITY_RATIO_MAX = 0.030
 DRY_BULB_MAX = 60
 
-DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.1)
+DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.5)
 
 
 def generate_iso_rh_line(rh: float) -> tuple[np.ndarray, np.ndarray]:
@@ -39,9 +39,12 @@ def display_color(color):
     print("render!")
     fig = go.Figure()
 
-    for rh in np.arange(10, 100, 10):
+    for rh in np.arange(1, 101, 1):
         x, y = generate_iso_rh_line(rh)
-        fig.add_trace(go.Scatter(x=x, y=y, marker_color="gray", name=f"RH = {rh} %"))
+        if rh % 10 == 0:  # only show lines for every 10% RH
+            fig.add_trace(go.Scatter(x=x, y=y, name=f"RH = {rh} %"))
+        else:
+            fig.add_trace(go.Scatter(x=x, y=y, showlegend=False, line=dict(color="rgba(0,0,0,0)")))
 
     fig.update_layout(
         autosize=True,
