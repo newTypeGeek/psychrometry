@@ -1,9 +1,13 @@
 import numpy as np
 
+ATMOSPHERIC_PRESSURE = 101325  # Pa
+GAS_CONSTANT_RATIO = 0.621945  # R_d / R_v
+
 
 def saturated_vapor_pressure(dry_bulb: np.ndarray) -> np.ndarray:
     """
     Calculate the saturated vapor pressure using Hyland and Wexler 1983 which is also recommended by ASHRAE
+    WARNING: This is only valid for temperatures between -100 °C and 200 °C at atmospheric pressure
 
     Args:
         dry_bulb: Dry bulb temperature, [°C]
@@ -37,7 +41,7 @@ def vapor_pressure(w: np.ndarray) -> np.ndarray:
         Vapor pressure, [Pa]
 
     """
-    return w / (0.621945 + w) * 101325
+    return w / (GAS_CONSTANT_RATIO + w) * ATMOSPHERIC_PRESSURE
 
 
 def relative_humidity(dry_bulb: np.ndarray, w: np.ndarray) -> np.ndarray:
@@ -68,4 +72,4 @@ def humidity_ratio(dry_bulb: np.ndarray, relative_humidity: np.ndarray) -> np.nd
 
     """
     vapor_pressure = relative_humidity / 100 * saturated_vapor_pressure(dry_bulb)
-    return 0.621945 * vapor_pressure / (101325 - vapor_pressure)
+    return GAS_CONSTANT_RATIO * vapor_pressure / (ATMOSPHERIC_PRESSURE - vapor_pressure)
