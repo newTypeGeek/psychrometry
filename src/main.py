@@ -49,7 +49,7 @@ def display_color(color):
         autosize=True,
         height=900,
         # paper_bgcolor="LightSteelBlue",
-        title=dict(text="Psychrometric Chart", font=dict(size=48)),
+        title=dict(text=f"Psychrometric Chart (P = {psy.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=36)),
         yaxis_range=[0, HUMIDITY_RATIO_MAX],
     )
 
