@@ -30,8 +30,7 @@ DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.5)
 
 def generate_iso_rh_line(rh: float) -> tuple[np.ndarray, np.ndarray]:
     humidity_ratios = psy.humidity_ratio(DRY_BULBS, rh)
-    is_in_range = humidity_ratios <= HUMIDITY_RATIO_MAX
-    return DRY_BULBS[is_in_range], humidity_ratios[is_in_range]
+    return DRY_BULBS, humidity_ratios
 
 
 @app.callback(Output("graph", "figure"), Input("dropdown", "value"))
@@ -51,6 +50,7 @@ def display_color(color):
         height=900,
         # paper_bgcolor="LightSteelBlue",
         title=dict(text="Psychrometric Chart", font=dict(size=48)),
+        yaxis_range=[0, HUMIDITY_RATIO_MAX],
     )
 
     return fig
