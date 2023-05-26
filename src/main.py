@@ -68,7 +68,7 @@ def display_color(color):
                 showlegend=showlegend,
                 line=line,
                 name="RH = {:.2f} %".format(rh),
-                hovertemplate=r"Dry Bulb: %{x:.2f} °C<br>RH: %{customdata[0]:.2f} %<br>",
+                hovertemplate=r"Dry Bulb: %{x:.2f} °C<br>RH: %{customdata[0]:.2f} %<br><extra></extra>",
             )
         )
 
