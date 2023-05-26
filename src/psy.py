@@ -53,3 +53,19 @@ def relative_humidity(dry_bulb: np.ndarray, w: np.ndarray) -> np.ndarray:
 
     """
     return vapor_pressure(w) / saturated_vapor_pressure(dry_bulb) * 100
+
+
+def humidity_ratio(dry_bulb: np.ndarray, relative_humidity: np.ndarray) -> np.ndarray:
+    """
+    Calculate the humidity ratio from dry bulb temperature and relative humidity
+
+    Args:
+        dry_bulb: Dry bulb temperature, [°C]
+        relative_humidity: Relative humidity, [%]
+
+    Returns:
+        Humidity ratio (vapor mass / dry air mass) [kg/kg]
+
+    """
+    vapor_pressure = relative_humidity / 100 * saturated_vapor_pressure(dry_bulb)
+    return 0.621945 * vapor_pressure / (101325 - vapor_pressure)
