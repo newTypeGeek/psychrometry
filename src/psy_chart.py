@@ -47,7 +47,7 @@ def create_psy_chart() -> go.Figure:
     for rh, humitidy_ratios in RH_TO_HUMIDITY_RATIOS.items():
         # only show lines for every 10% RH
         if rh % 10 == 0:
-            line = dict(color=RH_TO_COLOR[rh])
+            line = dict(color=RH_TO_COLOR[rh], width=1)
             showlegend = True
         else:
             line = dict(color="rgba(0,0,0,0)")
