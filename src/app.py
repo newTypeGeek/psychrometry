@@ -83,6 +83,7 @@ def create_psy_chart():
 app.layout = html.Div(
     [
         html.Title("Psychrometric Chart"),
+        html.H1('Hello Dash', style={'textAlign': 'center', 'color': '#7FDBFF'}),
         dcc.Graph(id="graph", figure=create_psy_chart()),
     ]
 )
