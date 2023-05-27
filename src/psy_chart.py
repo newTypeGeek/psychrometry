@@ -26,6 +26,19 @@ def generate_humidity_ratios() -> dict[float, np.ndarray]:
 
 RH_TO_HUMIDITY_RATIOS = generate_humidity_ratios()
 
+RH_TO_COLOR = {
+    10: "rgba(255, 0, 0, 255)",
+    20: "rgba(255, 50, 0, 255)",
+    30: "rgba(255, 100, 0, 255)",
+    40: "rgba(255, 150, 0, 255)",
+    50: "rgba(0, 200, 255, 255)",
+    60: "rgba(0, 150, 255, 255)",
+    70: "rgba(0, 100, 255, 255)",
+    80: "rgba(0, 70, 255, 255)",
+    90: "rgba(0, 50, 255, 255)",
+    100: "rgba(0, 0, 255, 255)",
+}
+
 
 def create_psy_chart() -> go.Figure:
     print("render!")
@@ -34,7 +47,7 @@ def create_psy_chart() -> go.Figure:
     for rh, humitidy_ratios in RH_TO_HUMIDITY_RATIOS.items():
         # only show lines for every 10% RH
         if rh % 10 == 0:
-            line = dict(color="blueviolet")
+            line = dict(color=RH_TO_COLOR[rh])
             showlegend = True
         else:
             line = dict(color="rgba(0,0,0,0)")
