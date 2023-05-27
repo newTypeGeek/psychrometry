@@ -2,7 +2,7 @@ from dash import Dash, dcc, html, Input, Output
 import plotly.graph_objects as go
 import numpy as np
 
-import psy
+import formula
 
 
 app = Dash(__name__)
@@ -23,7 +23,7 @@ def generate_humidity_ratios() -> dict[float, np.ndarray]:
     rh_step = 0.5
     rh_to_humidity_ratios = {}
     for rh in np.arange(rh_start, rh_end + rh_step, rh_step):
-        humidity_ratios = psy.humidity_ratio(DRY_BULBS, rh)
+        humidity_ratios = formula.humidity_ratio(DRY_BULBS, rh)
 
         rh_to_humidity_ratios[rh] = humidity_ratios
 
@@ -62,7 +62,7 @@ def create_psy_chart():
         autosize=True,
         # height=900,
         # paper_bgcolor="LightSteelBlue",
-        title=dict(text=f"Psychrometric Chart (P = {psy.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=36)),
+        title=dict(text=f"Psychrometric Chart (P = {formula.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=36)),
         xaxis=dict(
             title=dict(text="Dry Bulb Temperature (°C)", font=dict(size=18)),
         ),
