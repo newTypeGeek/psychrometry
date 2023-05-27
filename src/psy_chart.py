@@ -26,6 +26,19 @@ def generate_humidity_ratios() -> dict[float, np.ndarray]:
 
 RH_TO_HUMIDITY_RATIOS = generate_humidity_ratios()
 
+RH_TO_COLOR = {
+    10: "rgba(255, 0, 0, 255)",
+    20: "rgba(255, 50, 0, 255)",
+    30: "rgba(255, 100, 0, 255)",
+    40: "rgba(255, 150, 0, 255)",
+    50: "rgba(0, 200, 255, 255)",
+    60: "rgba(0, 150, 255, 255)",
+    70: "rgba(0, 100, 255, 255)",
+    80: "rgba(0, 70, 255, 255)",
+    90: "rgba(110, 50, 255, 255)",
+    100: "rgba(200, 0, 255, 255)",
+}
+
 
 def create_psy_chart() -> go.Figure:
     print("render!")
@@ -34,7 +47,7 @@ def create_psy_chart() -> go.Figure:
     for rh, humitidy_ratios in RH_TO_HUMIDITY_RATIOS.items():
         # only show lines for every 10% RH
         if rh % 10 == 0:
-            line = dict(color="blueviolet")
+            line = dict(color=RH_TO_COLOR[rh], width=1)
             showlegend = True
         else:
             line = dict(color="rgba(0,0,0,0)")
@@ -54,8 +67,7 @@ def create_psy_chart() -> go.Figure:
 
     fig.update_layout(
         autosize=True,
-        # height=900,
-        # paper_bgcolor="LightSteelBlue",
+        height=600,
         title=dict(text=f"Psychrometric Chart (P = {formula.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=22)),
         xaxis=dict(
             title=dict(text="Dry Bulb Temperature (°C)", font=dict(size=18)),
@@ -69,6 +81,7 @@ def create_psy_chart() -> go.Figure:
             x=1.1,
             font=dict(size=18),
         ),
+        margin=dict(l=0, r=0, t=50, b=0),
     )
 
     return fig
