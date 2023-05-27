@@ -1,26 +1,7 @@
-from dash import Dash, dcc, html, Input, Output
 import plotly.graph_objects as go
 import numpy as np
 
-import psy
-
-
-app = Dash(__name__)
-app.title = "Psychrometric Chart"
-
-app.layout = html.Div(
-    [
-        html.H4("Interactive color selection with simple Dash example"),
-        html.P("Select color:"),
-        dcc.Dropdown(
-            id="dropdown",
-            options=["Gold", "MediumTurquoise", "LightGreen"],
-            value="Gold",
-            clearable=False,
-        ),
-        dcc.Graph(id="graph"),
-    ]
-)
+import formula
 
 HUMIDITY_RATIO_MAX = 0.03
 DRY_BULB_MAX = 50
@@ -36,7 +17,7 @@ def generate_humidity_ratios() -> dict[float, np.ndarray]:
     rh_step = 0.5
     rh_to_humidity_ratios = {}
     for rh in np.arange(rh_start, rh_end + rh_step, rh_step):
-        humidity_ratios = psy.humidity_ratio(DRY_BULBS, rh)
+        humidity_ratios = formula.humidity_ratio(DRY_BULBS, rh)
 
         rh_to_humidity_ratios[rh] = humidity_ratios
 
@@ -46,8 +27,7 @@ def generate_humidity_ratios() -> dict[float, np.ndarray]:
 RH_TO_HUMIDITY_RATIOS = generate_humidity_ratios()
 
 
-@app.callback(Output("graph", "figure"), Input("dropdown", "value"))
-def display_color(color):
+def create_psy_chart() -> go.Figure:
     print("render!")
     fig = go.Figure()
 
@@ -74,9 +54,9 @@ def display_color(color):
 
     fig.update_layout(
         autosize=True,
-        height=900,
+        # height=900,
         # paper_bgcolor="LightSteelBlue",
-        title=dict(text=f"Psychrometric Chart (P = {psy.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=36)),
+        title=dict(text=f"Psychrometric Chart (P = {formula.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=22)),
         xaxis=dict(
             title=dict(text="Dry Bulb Temperature (°C)", font=dict(size=18)),
         ),
@@ -92,7 +72,3 @@ def display_color(color):
     )
 
     return fig
-
-
-if __name__ == "__main__":
-    app.run_server(debug=True)
