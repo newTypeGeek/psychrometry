@@ -10,7 +10,7 @@ app.title = "Psychrometric Chart"
 app.layout = html.Div(
     [
         html.Title("Psychrometric Chart"),
-        html.H1("Hello Dash", style={"textAlign": "center", "color": "#7FDBFF"}),
+        html.H1("Dash App", style={"textAlign": "center", "color": "black"}),
         dcc.Graph(id="graph", figure=psy_chart.create_psy_chart()),
     ]
 )

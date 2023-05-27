@@ -56,7 +56,7 @@ def create_psy_chart() -> go.Figure:
         autosize=True,
         # height=900,
         # paper_bgcolor="LightSteelBlue",
-        title=dict(text=f"Psychrometric Chart (P = {formula.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=36)),
+        title=dict(text=f"Psychrometric Chart (P = {formula.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=22)),
         xaxis=dict(
             title=dict(text="Dry Bulb Temperature (°C)", font=dict(size=18)),
         ),
