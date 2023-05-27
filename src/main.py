@@ -8,19 +8,6 @@ import psy
 app = Dash(__name__)
 app.title = "Psychrometric Chart"
 
-app.layout = html.Div(
-    [
-        html.H4("Interactive color selection with simple Dash example"),
-        html.P("Select color:"),
-        dcc.Dropdown(
-            id="dropdown",
-            options=["Gold", "MediumTurquoise", "LightGreen"],
-            value="Gold",
-            clearable=False,
-        ),
-        dcc.Graph(id="graph"),
-    ]
-)
 
 HUMIDITY_RATIO_MAX = 0.03
 DRY_BULB_MAX = 50
@@ -46,8 +33,7 @@ def generate_humidity_ratios() -> dict[float, np.ndarray]:
 RH_TO_HUMIDITY_RATIOS = generate_humidity_ratios()
 
 
-@app.callback(Output("graph", "figure"), Input("dropdown", "value"))
-def display_color(color):
+def create_psy_chart():
     print("render!")
     fig = go.Figure()
 
@@ -74,7 +60,7 @@ def display_color(color):
 
     fig.update_layout(
         autosize=True,
-        height=900,
+        # height=900,
         # paper_bgcolor="LightSteelBlue",
         title=dict(text=f"Psychrometric Chart (P = {psy.ATMOSPHERIC_PRESSURE} Pa)", font=dict(size=36)),
         xaxis=dict(
@@ -93,6 +79,13 @@ def display_color(color):
 
     return fig
 
+
+app.layout = html.Div(
+    [
+        html.Title("Psychrometric Chart"),
+        dcc.Graph(id="graph", figure=create_psy_chart()),
+    ]
+)
 
 if __name__ == "__main__":
     app.run_server(debug=True)
