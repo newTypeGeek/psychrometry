@@ -7,12 +7,13 @@ import formula
 HUMIDITY_RATIO_MAX = 0.03
 DRY_BULB_MAX = 50
 
-DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.5)
+DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.1)
 
 NUM_DATA_POINTS = len(DRY_BULBS)
 
 
 class ThermoProperty(enum.Enum):
+    DRY_BULB = "dry_bulb"
     RELATIVE_HUMIDITY = "relative_humidity"
     HUMIDITY_RATIO = "humidity_ratio"
     WET_BULB = "wet_bulb"
@@ -45,17 +46,20 @@ def precompute_thermo_properties_by_wet_bulb() -> dict[float, dict[ThermoPropert
     wet_bulb_to_themo_properties = {}
     for wet_bulb in np.arange(wet_bulb_start, wet_bulb_end + wet_bulb_step, wet_bulb_step):
         humidity_ratios = formula.humidity_ratio_by_dry_bulb_and_wet_bulb(DRY_BULBS, wet_bulb)
+        relative_humidities = formula.relative_humidity(DRY_BULBS, humidity_ratios)
+        dew_points = formula.dew_point_temperature(humidity_ratios)
+        spec_enthalpy = formula.specific_enthalpy(DRY_BULBS, humidity_ratios)
+
+        # filter out values that are not physical
+        is_rh_in_range = (0 <= relative_humidities) & (relative_humidities <= 100)
+
         wet_bulb_to_themo_properties[wet_bulb] = {}
-        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.HUMIDITY_RATIO] = humidity_ratios
-        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.RELATIVE_HUMIDITY] = formula.relative_humidity(
-            DRY_BULBS, humidity_ratios
-        )
-        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.DEW_POINT] = formula.dew_point_temperature(
-            humidity_ratios
-        )
-        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.SPECIFIC_ENTHALPY] = formula.specific_enthalpy(
-            DRY_BULBS, humidity_ratios
-        )
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.DRY_BULB] = DRY_BULBS[is_rh_in_range]
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.HUMIDITY_RATIO] = humidity_ratios[is_rh_in_range]
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.RELATIVE_HUMIDITY] = relative_humidities[is_rh_in_range]
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.WET_BULB] = np.array([wet_bulb] * is_rh_in_range.sum())
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.DEW_POINT] = dew_points[is_rh_in_range]
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.SPECIFIC_ENTHALPY] = spec_enthalpy[is_rh_in_range]
     return wet_bulb_to_themo_properties
 
 
@@ -130,10 +134,9 @@ def create_psy_chart() -> go.Figure:
             line = dict(color="rgba(0,0,0,0)")
             showlegend = False
 
-        wet_bulbs = np.array([wet_bulb] * NUM_DATA_POINTS)
         customdata = np.stack(
             [
-                wet_bulbs,
+                attr_to_vals[ThermoProperty.WET_BULB],
                 attr_to_vals[ThermoProperty.RELATIVE_HUMIDITY],
                 attr_to_vals[ThermoProperty.DEW_POINT],
                 attr_to_vals[ThermoProperty.SPECIFIC_ENTHALPY],
@@ -151,7 +154,7 @@ def create_psy_chart() -> go.Figure:
         )
         fig.add_trace(
             go.Scatter(
-                x=DRY_BULBS,
+                x=attr_to_vals[ThermoProperty.DRY_BULB],
                 y=attr_to_vals[ThermoProperty.HUMIDITY_RATIO],
                 customdata=customdata,
                 showlegend=showlegend,
