@@ -108,3 +108,27 @@ def dew_point_temperature(humidity_ratio: np.ndarray) -> np.ndarray:
     alpha = np.log(p_in_kpa)
 
     return 6.54 + 14.526 * alpha + 0.7389 * alpha**2 + 0.09486 * alpha**3 + 0.4569 * p_in_kpa**0.1984
+
+
+def wet_bulb_temperature(dry_bulb: np.ndarray, relative_humidity: np.ndarray) -> np.ndarray:
+    """
+    Calculate the wet bulb temperature from dry bulb temperature and relative humidity
+    Ref: Stull, R. Wet-bulb temperature from relative humidity and air temperature.
+         J. Appl. Meteorol. Climatol. 2011, 50, 2267–2269.
+
+    Args:
+        dry_bulb: Dry bulb temperature, [°C]
+        relative_humidity: Relative humidity, [%]
+
+    Returns:
+       Wet bulb temperature, [°C]
+
+    """
+    rh = relative_humidity / 100.0
+    return (
+        dry_bulb * np.arctan(0.151977 * (rh + 8.313659) ** 0.5)
+        + np.arctan(dry_bulb + rh)
+        - np.arctan(rh - 1.676331)
+        + 0.00391838 * (rh) ** 1.5 * np.arctan(0.023101 * rh)
+        - 4.686035
+    )
