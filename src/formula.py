@@ -105,6 +105,6 @@ def dew_point_temperature(dry_bulb: np.ndarray, humidity_ratio: np.ndarray) -> n
     """
 
     p = vapor_pressure(humidity_ratio)
-    alpha = np.log(p)
+    alpha = np.log(p/1000)
 
     return 6.54 + 14.526 * alpha + 0.7389 * alpha**2 + 0.09486 * alpha**3 + 0.4569 * p**0.1984
