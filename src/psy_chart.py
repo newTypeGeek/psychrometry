@@ -13,6 +13,7 @@ NUM_DATA_POINTS = len(DRY_BULBS)
 
 
 class ThermoProperty(enum.Enum):
+    RELATIVE_HUMIDITY = "relative_humidity"
     HUMIDITY_RATIO = "humidity_ratio"
     WET_BULB = "wet_bulb"
     DEW_POINT = "dew_point"
@@ -35,6 +36,23 @@ def precompute_thermo_properties_by_rh() -> dict[float, dict[ThermoProperty, np.
         )
 
     return rh_to_thermo_properties
+
+
+def precompute_thermo_properties_by_wet_bulb() -> dict[float, dict[ThermoProperty, np.ndarray]]:
+    wet_bulb_start = -12
+    wet_bulb_end =  36
+    wet_bulb_step = 0.5
+    wet_bulb_to_themo_properties = {}
+    for wet_bulb in np.arange(wet_bulb_start, wet_bulb_end + wet_bulb_step, wet_bulb_step):
+        humidity_ratios = formula.humidity_ratio_by_dry_bulb_and_wet_bulb(DRY_BULBS, wet_bulb)
+        wet_bulb_to_themo_properties[wet_bulb] = {}
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.HUMIDITY_RATIO] = humidity_ratios
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.RELATIVE_HUMIDITY] = formula.relative_humidity(DRY_BULBS, humidity_ratios)
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.DEW_POINT] = formula.dew_point_temperature(humidity_ratios)
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.SPECIFIC_ENTHALPY] = formula.specific_enthalpy(
+            DRY_BULBS, humidity_ratios
+        )
+        return wet_bulb_to_themo_properties
 
 
 RH_TO_THERMO_PROPERTIES = precompute_thermo_properties_by_rh()
