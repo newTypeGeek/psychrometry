@@ -19,7 +19,7 @@ class ThermoProperty(enum.Enum):
     SPECIFIC_ENTHALPY = "specific_enthalpy"
 
 
-def precompute_thermo_properties() -> dict[float, dict[ThermoProperty, np.ndarray]]:
+def precompute_thermo_properties_by_rh() -> dict[float, dict[ThermoProperty, np.ndarray]]:
     rh_start = 1
     rh_end = 100
     rh_step = 0.5
@@ -37,7 +37,7 @@ def precompute_thermo_properties() -> dict[float, dict[ThermoProperty, np.ndarra
     return rh_to_thermo_properties
 
 
-RH_TO_THERMO_PROPERTIES = precompute_thermo_properties()
+RH_TO_THERMO_PROPERTIES = precompute_thermo_properties_by_rh()
 
 RH_TO_COLOR = {
     10: "rgba(255, 0, 0, 255)",
