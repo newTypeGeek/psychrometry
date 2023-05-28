@@ -65,7 +65,7 @@ def create_psy_chart() -> go.Figure:
         hovertemplate = (
             "Dry Bulb: %{x:.1f} °C<br>"
             "Humidity Ratio: %{y:.4f} kg/kg<br>"
-            "RH: %{customdata[0]:.1f} %<br>"
+            "Relative Humidity: %{customdata[0]:.1f} %<br>"
             "Dew Point: %{customdata[1]:.1f} °C<br>"
             "Spec. Enthalpy: %{customdata[2]:.1f} kJ/kg"
             "<extra></extra>"
