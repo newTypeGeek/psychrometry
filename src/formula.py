@@ -91,7 +91,7 @@ def specific_enthalpy(dry_bulb: np.ndarray, humidity_ratio: np.ndarray) -> np.nd
     return 1.006 * dry_bulb + humidity_ratio * (2501 + 1.86 * dry_bulb)
 
 
-def dew_point_temperature(dry_bulb: np.ndarray, humidity_ratio: np.ndarray) -> np.ndarray:
+def dew_point_temperature(humidity_ratio: np.ndarray) -> np.ndarray:
     """
     Calculate the dew point temperature from dry bulb temperature and humidity ratio (Peppers 1988)
 
@@ -104,7 +104,7 @@ def dew_point_temperature(dry_bulb: np.ndarray, humidity_ratio: np.ndarray) -> n
 
     """
 
-    p = vapor_pressure(humidity_ratio)
-    alpha = np.log(p/1000)
+    p_in_kpa = vapor_pressure(humidity_ratio) / 1000.0
+    alpha = np.log(p_in_kpa)
 
-    return 6.54 + 14.526 * alpha + 0.7389 * alpha**2 + 0.09486 * alpha**3 + 0.4569 * p**0.1984
+    return 6.54 + 14.526 * alpha + 0.7389 * alpha**2 + 0.09486 * alpha**3 + 0.4569 * p_in_kpa**0.1984
