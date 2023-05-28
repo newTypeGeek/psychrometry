@@ -157,7 +157,7 @@ def create_psy_chart() -> go.Figure:
                 customdata=customdata,
                 showlegend=showlegend,
                 line=line,
-                name="Wet Bulb = {:.0f}°C".format(rh),
+                name="Wet Bulb = {:.0f}°C".format(wet_bulb),
                 hovertemplate=hovertemplate,
             )
         )
