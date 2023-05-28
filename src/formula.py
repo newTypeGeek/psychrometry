@@ -30,33 +30,33 @@ def saturated_vapor_pressure(dry_bulb: np.ndarray) -> np.ndarray:
     return np.exp(log_p_sat)
 
 
-def vapor_pressure(w: np.ndarray) -> np.ndarray:
+def vapor_pressure(humidity_ratio: np.ndarray) -> np.ndarray:
     """
     Calculate the vapor pressure from humidity ratio
 
     Args:
-        w: Humidity ratio (vapor mass / dry air mass) [kg/kg]
+        humidity_ratio: Humidity ratio (vapor mass / dry air mass) [kg/kg]
 
     Returns:
         Vapor pressure, [Pa]
 
     """
-    return w / (GAS_CONSTANT_RATIO + w) * ATMOSPHERIC_PRESSURE
+    return humidity_ratio / (GAS_CONSTANT_RATIO + humidity_ratio) * ATMOSPHERIC_PRESSURE
 
 
-def relative_humidity(dry_bulb: np.ndarray, w: np.ndarray) -> np.ndarray:
+def relative_humidity(dry_bulb: np.ndarray, humidity_ratio: np.ndarray) -> np.ndarray:
     """
     Calculate the relative humidity from dry bulb temperature and humidity ratio
 
     Args:
         dry_bulb: Dry bulb temperature, [°C]
-        w: Humidity ratio (vapor mass / dry air mass) [kg/kg]
+        humidity_ratio: Humidity ratio (vapor mass / dry air mass) [kg/kg]
 
     Returns:
         Relative humidity, [%]
 
     """
-    return vapor_pressure(w) / saturated_vapor_pressure(dry_bulb) * 100
+    return vapor_pressure(humidity_ratio) / saturated_vapor_pressure(dry_bulb) * 100
 
 
 def humidity_ratio(dry_bulb: np.ndarray, relative_humidity: np.ndarray) -> np.ndarray:
@@ -75,16 +75,16 @@ def humidity_ratio(dry_bulb: np.ndarray, relative_humidity: np.ndarray) -> np.nd
     return GAS_CONSTANT_RATIO * vapor_pressure / (ATMOSPHERIC_PRESSURE - vapor_pressure)
 
 
-def specific_enthalpy(dry_bulb: np.ndarray, w: np.ndarray) -> np.ndarray:
+def specific_enthalpy(dry_bulb: np.ndarray, humidity_ratio: np.ndarray) -> np.ndarray:
     """
     Calculate the specific enthalpy from dry bulb temperature and humidity ratio
 
     Args:
         dry_bulb: Dry bulb temperature, [°C]
-        w: Humidity ratio (vapor mass / dry air mass) [kg/kg]
+        humidity_ratio: Humidity ratio (vapor mass / dry air mass) [kg/kg]
 
     Returns:
        Specific enthalpy, [kJ/kg]
 
     """
-    return 1.006 * dry_bulb + w * (2501 + 1.86 * dry_bulb)
+    return 1.006 * dry_bulb + humidity_ratio * (2501 + 1.86 * dry_bulb)
