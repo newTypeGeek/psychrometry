@@ -148,4 +148,6 @@ def humidity_ratio_by_dry_bulb_and_wet_bulb(dry_bulb: np.ndarray, wet_bulb: np.n
     """
     p_sat = saturated_vapor_pressure(wet_bulb)
     humidity_ratio_sat = GAS_CONSTANT_RATIO * p_sat / (ATMOSPHERIC_PRESSURE - p_sat)
-    return (2501 - 2.326 * wet_bulb) * humidity_ratio_sat / (2501 + 1.86 * dry_bulb - 4.186 * wet_bulb)
+    return ((2501 - 2.326 * wet_bulb) * humidity_ratio_sat - 1.006 * (dry_bulb - wet_bulb)) / (
+        2501 + 1.86 * dry_bulb - 4.186 * wet_bulb
+    )
