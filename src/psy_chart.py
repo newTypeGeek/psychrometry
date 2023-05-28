@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 import numpy as np
+import enum
 
 import formula
 
@@ -11,20 +12,32 @@ DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.5)
 NUM_DATA_POINTS = len(DRY_BULBS)
 
 
-def generate_humidity_ratios() -> dict[float, np.ndarray]:
+class ThermoProperty(enum.Enum):
+    HUMIDITY_RATIO = "humidity_ratio"
+    WET_BULB = "wet_bulb"
+    DEW_POINT = "dew_point"
+    SPECIFIC_ENTHALPY = "specific_enthalpy"
+
+
+def precompute_thermo_properties() -> dict[float, dict[ThermoProperty, np.ndarray]]:
     rh_start = 1
     rh_end = 100
     rh_step = 0.5
-    rh_to_humidity_ratios = {}
+    rh_to_thermo_properties = {}
     for rh in np.arange(rh_start, rh_end + rh_step, rh_step):
         humidity_ratios = formula.humidity_ratio(DRY_BULBS, rh)
+        rh_to_thermo_properties[rh] = {}
+        rh_to_thermo_properties[rh][ThermoProperty.HUMIDITY_RATIO] = humidity_ratios
+        rh_to_thermo_properties[rh][ThermoProperty.WET_BULB] = formula.wet_bulb_temperature(DRY_BULBS, rh)
+        rh_to_thermo_properties[rh][ThermoProperty.DEW_POINT] = formula.dew_point_temperature(humidity_ratios)
+        rh_to_thermo_properties[rh][ThermoProperty.SPECIFIC_ENTHALPY] = formula.specific_enthalpy(
+            DRY_BULBS, humidity_ratios
+        )
 
-        rh_to_humidity_ratios[rh] = humidity_ratios
-
-    return rh_to_humidity_ratios
+    return rh_to_thermo_properties
 
 
-RH_TO_HUMIDITY_RATIOS = generate_humidity_ratios()
+RH_TO_THERMO_PROPERTIES = precompute_thermo_properties()
 
 RH_TO_COLOR = {
     10: "rgba(255, 0, 0, 255)",
@@ -44,7 +57,7 @@ def create_psy_chart() -> go.Figure:
     print("render!")
     fig = go.Figure()
 
-    for rh, humitidy_ratios in RH_TO_HUMIDITY_RATIOS.items():
+    for rh, attr_to_vals in RH_TO_THERMO_PROPERTIES.items():
         # only show lines for every 10% RH
         if rh % 10 == 0:
             line = dict(color=RH_TO_COLOR[rh], width=1)
@@ -57,9 +70,9 @@ def create_psy_chart() -> go.Figure:
         customdata = np.stack(
             [
                 rhs,
-                formula.wet_bulb_temperature(DRY_BULBS, rhs),
-                formula.dew_point_temperature(humitidy_ratios),
-                formula.specific_enthalpy(DRY_BULBS, humitidy_ratios),
+                attr_to_vals[ThermoProperty.WET_BULB],
+                attr_to_vals[ThermoProperty.DEW_POINT],
+                attr_to_vals[ThermoProperty.SPECIFIC_ENTHALPY],
             ],
             axis=-1,
         )
@@ -75,7 +88,7 @@ def create_psy_chart() -> go.Figure:
         fig.add_trace(
             go.Scatter(
                 x=DRY_BULBS,
-                y=humitidy_ratios,
+                y=attr_to_vals[ThermoProperty.HUMIDITY_RATIO],
                 customdata=customdata,
                 showlegend=showlegend,
                 line=line,
