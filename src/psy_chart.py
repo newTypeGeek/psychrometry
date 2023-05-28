@@ -62,6 +62,13 @@ def create_psy_chart() -> go.Figure:
             ],
             axis=-1,
         )
+        hovertemplate = (
+            "Dry Bulb: %{x:.1f} °C<br>"
+            "RH: %{customdata[0]:.1f} %<br>"
+            "Dew Point: %{customdata[1]:.1f} °C<br>"
+            "Spec. Enthalpy: %{customdata[2]:.1f} kJ/kg"
+            "<extra></extra>"
+        )
         fig.add_trace(
             go.Scatter(
                 x=DRY_BULBS,
@@ -70,7 +77,7 @@ def create_psy_chart() -> go.Figure:
                 showlegend=showlegend,
                 line=line,
                 name="RH = {:.0f} %".format(rh),
-                hovertemplate="Dry Bulb: %{x:.1f} °C<br>RH: %{customdata[0]:.1f} %<br>Dew Point: %{customdata[1]:.1f} °C<br>Spec. Enthalpy: %{customdata[2]:.1f} kJ/kg<extra></extra>",
+                hovertemplate=hovertemplate,
             )
         )
 
