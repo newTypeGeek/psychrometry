@@ -57,6 +57,7 @@ def create_psy_chart() -> go.Figure:
         customdata = np.stack(
             [
                 rhs,
+                formula.wet_bulb_temperature(DRY_BULBS, rhs),
                 formula.dew_point_temperature(humitidy_ratios),
                 formula.specific_enthalpy(DRY_BULBS, humitidy_ratios),
             ],
@@ -66,8 +67,9 @@ def create_psy_chart() -> go.Figure:
             "Dry Bulb: %{x:.1f} °C<br>"
             "Humidity Ratio: %{y:.4f} kg/kg<br>"
             "Relative Humidity: %{customdata[0]:.1f} %<br>"
-            "Dew Point: %{customdata[1]:.1f} °C<br>"
-            "Spec. Enthalpy: %{customdata[2]:.1f} kJ/kg"
+            "Wet Bulb: %{customdata[1]:.1f} °C<br>"
+            "Dew Point: %{customdata[2]:.1f} °C<br>"
+            "Spec. Enthalpy: %{customdata[3]:.1f} kJ/kg"
             "<extra></extra>"
         )
         fig.add_trace(
