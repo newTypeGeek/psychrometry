@@ -1,5 +1,6 @@
 import numpy as np
 
+# Warning: Formula (i.e. functions) below is not valid if you change these two parameters
 ATMOSPHERIC_PRESSURE = 101325  # Pa
 GAS_CONSTANT_RATIO = 0.621945  # R_d / R_v
 
