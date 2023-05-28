@@ -53,15 +53,24 @@ def create_psy_chart() -> go.Figure:
             line = dict(color="rgba(0,0,0,0)")
             showlegend = False
 
+        rhs = np.array([rh] * NUM_DATA_POINTS)
+        customdata = np.stack(
+            [
+                rhs,
+                formula.dew_point_temperature(humitidy_ratios),
+                formula.specific_enthalpy(DRY_BULBS, humitidy_ratios),
+            ],
+            axis=-1,
+        )
         fig.add_trace(
             go.Scatter(
                 x=DRY_BULBS,
                 y=humitidy_ratios,
-                customdata=np.stack([[rh] * NUM_DATA_POINTS], axis=-1),
+                customdata=customdata,
                 showlegend=showlegend,
                 line=line,
                 name="RH = {:.0f} %".format(rh),
-                hovertemplate=r"Dry Bulb: %{x:.1f} °C<br>RH: %{customdata[0]:.1f} %<br><extra></extra>",
+                hovertemplate="Dry Bulb: %{x:.1f} °C<br>RH: %{customdata[0]:.1f} %<br>Dew Point: %{customdata[1]:.1f} °C<br>Spec. Enthalpy: %{customdata[2]:.1f} kJ/kg<extra></extra>",
             )
         )
 
