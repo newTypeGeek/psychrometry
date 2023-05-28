@@ -132,3 +132,22 @@ def wet_bulb_temperature(dry_bulb: np.ndarray, relative_humidity: np.ndarray) ->
         + 0.00391838 * (rh) ** 1.5 * np.arctan(0.023101 * rh)
         - 4.686035
     )
+
+
+def humidity_ratio_by_dry_bulb_and_wet_bulb(dry_bulb: np.ndarray, wet_bulb: np.ndarray) -> np.ndarray:
+    """
+    Calculate the humidity ratio from dry bulb temperature and wet bulb temperature (From ASHARE)
+
+    Args:
+        dry_bulb: Dry bulb temperature, [°C]
+        wet_bulb: Wet bulb temperature, [°C]
+
+    Returns:
+       Humidity ratio (vapor mass / dry air mass) [kg/kg]
+
+    """
+    p_sat = saturated_vapor_pressure(wet_bulb)
+    humidity_ratio_sat = GAS_CONSTANT_RATIO * p_sat / (ATMOSPHERIC_PRESSURE - p_sat)
+    return ((2501 - 2.326 * wet_bulb) * humidity_ratio_sat - 1.006 * (dry_bulb - wet_bulb)) / (
+        2501 + 1.86 * dry_bulb - 4.186 * wet_bulb
+    )

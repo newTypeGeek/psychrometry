@@ -7,19 +7,21 @@ import formula
 HUMIDITY_RATIO_MAX = 0.03
 DRY_BULB_MAX = 50
 
-DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.5)
+DRY_BULBS = np.arange(-10, DRY_BULB_MAX, 0.1)
 
 NUM_DATA_POINTS = len(DRY_BULBS)
 
 
 class ThermoProperty(enum.Enum):
+    DRY_BULB = "dry_bulb"
+    RELATIVE_HUMIDITY = "relative_humidity"
     HUMIDITY_RATIO = "humidity_ratio"
     WET_BULB = "wet_bulb"
     DEW_POINT = "dew_point"
     SPECIFIC_ENTHALPY = "specific_enthalpy"
 
 
-def precompute_thermo_properties() -> dict[float, dict[ThermoProperty, np.ndarray]]:
+def precompute_thermo_properties_by_rh() -> dict[float, dict[ThermoProperty, np.ndarray]]:
     rh_start = 1
     rh_end = 100
     rh_step = 0.5
@@ -37,7 +39,33 @@ def precompute_thermo_properties() -> dict[float, dict[ThermoProperty, np.ndarra
     return rh_to_thermo_properties
 
 
-RH_TO_THERMO_PROPERTIES = precompute_thermo_properties()
+def precompute_thermo_properties_by_wet_bulb() -> dict[float, dict[ThermoProperty, np.ndarray]]:
+    wet_bulb_start = -12
+    wet_bulb_end = 36
+    wet_bulb_step = 0.5
+    wet_bulb_to_themo_properties = {}
+    for wet_bulb in np.arange(wet_bulb_start, wet_bulb_end + wet_bulb_step, wet_bulb_step):
+        humidity_ratios = formula.humidity_ratio_by_dry_bulb_and_wet_bulb(DRY_BULBS, wet_bulb)
+        relative_humidities = formula.relative_humidity(DRY_BULBS, humidity_ratios)
+        dew_points = formula.dew_point_temperature(humidity_ratios)
+        spec_enthalpy = formula.specific_enthalpy(DRY_BULBS, humidity_ratios)
+
+        # filter out values that are not physical
+        is_rh_in_range = (0 <= relative_humidities) & (relative_humidities <= 100)
+
+        wet_bulb_to_themo_properties[wet_bulb] = {}
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.DRY_BULB] = DRY_BULBS[is_rh_in_range]
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.HUMIDITY_RATIO] = humidity_ratios[is_rh_in_range]
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.RELATIVE_HUMIDITY] = relative_humidities[is_rh_in_range]
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.WET_BULB] = np.array([wet_bulb] * is_rh_in_range.sum())
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.DEW_POINT] = dew_points[is_rh_in_range]
+        wet_bulb_to_themo_properties[wet_bulb][ThermoProperty.SPECIFIC_ENTHALPY] = spec_enthalpy[is_rh_in_range]
+    return wet_bulb_to_themo_properties
+
+
+RH_TO_THERMO_PROPERTIES = precompute_thermo_properties_by_rh()
+
+WET_BULB_TO_THERMO_PROPERTIES = precompute_thermo_properties_by_wet_bulb()
 
 RH_TO_COLOR = {
     10: "rgba(255, 0, 0, 255)",
@@ -93,6 +121,45 @@ def create_psy_chart() -> go.Figure:
                 showlegend=showlegend,
                 line=line,
                 name="RH = {:.0f} %".format(rh),
+                hovertemplate=hovertemplate,
+            )
+        )
+
+    for wet_bulb, attr_to_vals in WET_BULB_TO_THERMO_PROPERTIES.items():
+        # only show lines for every 5°C wet bulb
+        if wet_bulb % 5 == 0:
+            line = dict(color="black", width=1, dash="dash")
+            showlegend = True
+        else:
+            line = dict(color="rgba(0,0,0,0)")
+            showlegend = False
+
+        customdata = np.stack(
+            [
+                attr_to_vals[ThermoProperty.WET_BULB],
+                attr_to_vals[ThermoProperty.RELATIVE_HUMIDITY],
+                attr_to_vals[ThermoProperty.DEW_POINT],
+                attr_to_vals[ThermoProperty.SPECIFIC_ENTHALPY],
+            ],
+            axis=-1,
+        )
+        hovertemplate = (
+            "Dry Bulb: %{x:.1f} °C<br>"
+            "Humidity Ratio: %{y:.4f} kg/kg<br>"
+            "Relative Humidity: %{customdata[1]:.1f} %<br>"
+            "Wet Bulb: %{customdata[0]:.1f} °C<br>"
+            "Dew Point: %{customdata[2]:.1f} °C<br>"
+            "Spec. Enthalpy: %{customdata[3]:.1f} kJ/kg"
+            "<extra></extra>"
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=attr_to_vals[ThermoProperty.DRY_BULB],
+                y=attr_to_vals[ThermoProperty.HUMIDITY_RATIO],
+                customdata=customdata,
+                showlegend=showlegend,
+                line=line,
+                name="Wet Bulb = {:.0f}°C".format(wet_bulb),
                 hovertemplate=hovertemplate,
             )
         )
