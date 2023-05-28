@@ -73,3 +73,18 @@ def humidity_ratio(dry_bulb: np.ndarray, relative_humidity: np.ndarray) -> np.nd
     """
     vapor_pressure = relative_humidity / 100 * saturated_vapor_pressure(dry_bulb)
     return GAS_CONSTANT_RATIO * vapor_pressure / (ATMOSPHERIC_PRESSURE - vapor_pressure)
+
+
+def specific_enthalpy(dry_bulb: np.ndarray, w: np.ndarray) -> np.ndarray:
+    """
+    Calculate the specific enthalpy from dry bulb temperature and humidity ratio
+
+    Args:
+        dry_bulb: Dry bulb temperature, [°C]
+        w: Humidity ratio (vapor mass / dry air mass) [kg/kg]
+
+    Returns:
+       Specific enthalpy, [kJ/kg]
+
+    """
+    return 1.006 * dry_bulb + w * (2501 + 1.86 * dry_bulb)
