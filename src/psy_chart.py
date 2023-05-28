@@ -123,7 +123,6 @@ def create_psy_chart() -> go.Figure:
 
     for wet_bulb, attr_to_vals in WET_BULB_TO_THERMO_PROPERTIES.items():
         # only show lines for every 5°C wet bulb
-        print(wet_bulb)
         if wet_bulb % 5 == 0:
             line = dict(color="black", width=1, dash="dash")
             showlegend = True
