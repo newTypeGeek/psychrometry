@@ -21,7 +21,7 @@ class IsoLine:
 
         return iso_to_thermo_properties
 
-    def _compute_thermo_attrs(self, by: str, iso_value: float) -> dict[schema.schema.ThermoAttribute, np.ndarray]:
+    def _compute_thermo_attrs(self, by: str, iso_value: float) -> dict[schema.ThermoAttribute, np.ndarray]:
         if by == schema.ThermoAttribute.RELATIVE_HUMIDITY:
             humidity_ratios = formula.humidity_ratio(self._dry_bulbs, iso_value)
             relative_humidities = np.array([iso_value] * self._num_data_points)
