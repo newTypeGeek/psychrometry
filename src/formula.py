@@ -124,12 +124,11 @@ def wet_bulb_temperature(dry_bulb: np.ndarray, relative_humidity: np.ndarray) ->
        Wet bulb temperature, [°C]
 
     """
-    rh = relative_humidity / 100.0
     return (
-        dry_bulb * np.arctan(0.151977 * (rh + 8.313659) ** 0.5)
-        + np.arctan(dry_bulb + rh)
-        - np.arctan(rh - 1.676331)
-        + 0.00391838 * (rh) ** 1.5 * np.arctan(0.023101 * rh)
+        dry_bulb * np.arctan(0.151977 * (relative_humidity + 8.313659) ** 0.5)
+        + np.arctan(dry_bulb + relative_humidity)
+        - np.arctan(relative_humidity - 1.676331)
+        + 0.00391838 * (relative_humidity) ** 1.5 * np.arctan(0.023101 * relative_humidity)
         - 4.686035
     )
 

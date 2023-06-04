@@ -5,19 +5,6 @@ import formula
 import iso_line
 import schema
 
-# RH_TO_COLOR = {
-#     10: "rgba(255, 0, 0, 255)",
-#     20: "rgba(255, 50, 0, 255)",
-#     30: "rgba(255, 100, 0, 255)",
-#     40: "rgba(255, 150, 0, 255)",
-#     50: "rgba(0, 200, 255, 255)",
-#     60: "rgba(0, 150, 255, 255)",
-#     70: "rgba(0, 100, 255, 255)",
-#     80: "rgba(0, 70, 255, 255)",
-#     90: "rgba(110, 50, 255, 255)",
-#     100: "rgba(200, 0, 255, 255)",
-# }
-
 
 class PsyChart:
     def __init__(self) -> None:
@@ -28,7 +15,7 @@ class PsyChart:
         self._add_iso_lines(
             by=schema.ThermoAttribute.RELATIVE_HUMIDITY, start=1, end=100, step=0.5, iso_display_interval=10
         )
-        self._add_iso_lines(by=schema.ThermoAttribute.WET_BULB, start=-12, end=36, step=0.5, iso_display_interval=5)
+        self._add_iso_lines(by=schema.ThermoAttribute.WET_BULB, start=-12, end=34, step=0.5, iso_display_interval=5)
         self._fig.update_layout(
             autosize=True,
             height=600,
@@ -38,7 +25,6 @@ class PsyChart:
             ),
             yaxis=dict(
                 title=dict(text="Humidity Ratio (kg/kg)", font=dict(size=18)),
-                range=[0, 0.03],
                 side="right",
             ),
             legend=dict(
@@ -69,20 +55,39 @@ class PsyChart:
             # Meanwhile, we only show a subset of the iso lines, to avoid cluttering the chart
             if iso_val % iso_display_interval == 0:
                 line = dict(color="black", width=1, dash="dash")
-                showlegend = True
+
+                # Add annotation to the iso line
+                if by == schema.ThermoAttribute.RELATIVE_HUMIDITY:
+                    x = attr_to_val[schema.ThermoAttribute.DRY_BULB][-1]
+                    y = attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO][-1]
+
+                else:
+                    x = attr_to_val[schema.ThermoAttribute.DRY_BULB][0]
+                    y = attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO][0]
+
+                unit = "%" if by == schema.ThermoAttribute.RELATIVE_HUMIDITY else "°C"
+                self._fig.add_annotation(
+                    x=x,
+                    y=y,
+                    text=f"{int(iso_val)} {unit}",
+                )
             else:
                 line = dict(color="rgba(0,0,0,0)")
-                showlegend = False
 
             self._fig.add_trace(
                 go.Scatter(
                     x=attr_to_val[schema.ThermoAttribute.DRY_BULB],
                     y=attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO],
                     name="{} = {:.1f}".format(by.name, iso_val),
-                    showlegend=showlegend,
+                    showlegend=False,
                     line=line,
                     customdata=np.stack(
-                        [attr_to_val[attr] for attr in schema.ThermoAttribute],
+                        [
+                            attr_to_val[schema.ThermoAttribute.RELATIVE_HUMIDITY],
+                            attr_to_val[schema.ThermoAttribute.WET_BULB],
+                            attr_to_val[schema.ThermoAttribute.DEW_POINT],
+                            attr_to_val[schema.ThermoAttribute.SPECIFIC_ENTHALPY],
+                        ],
                         axis=-1,
                     ),
                     hovertemplate=hovertemplate,
