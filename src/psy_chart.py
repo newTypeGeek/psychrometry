@@ -55,7 +55,6 @@ class PsyChart:
             # Meanwhile, we only show a subset of the iso lines, to avoid cluttering the chart
             if iso_val % iso_display_interval == 0:
                 line = dict(color="black", width=1, dash="dash")
-                showlegend = True
 
                 # Add annotation to the iso line
                 if by == schema.ThermoAttribute.RELATIVE_HUMIDITY:
@@ -74,14 +73,13 @@ class PsyChart:
                 )
             else:
                 line = dict(color="rgba(0,0,0,0)")
-                showlegend = False
 
             self._fig.add_trace(
                 go.Scatter(
                     x=attr_to_val[schema.ThermoAttribute.DRY_BULB],
                     y=attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO],
                     name="{} = {:.1f}".format(by.name, iso_val),
-                    showlegend=showlegend,
+                    showlegend=False,
                     line=line,
                     customdata=np.stack(
                         [attr_to_val[attr] for attr in schema.ThermoAttribute],
