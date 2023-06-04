@@ -5,19 +5,6 @@ import formula
 import iso_line
 import schema
 
-# RH_TO_COLOR = {
-#     10: "rgba(255, 0, 0, 255)",
-#     20: "rgba(255, 50, 0, 255)",
-#     30: "rgba(255, 100, 0, 255)",
-#     40: "rgba(255, 150, 0, 255)",
-#     50: "rgba(0, 200, 255, 255)",
-#     60: "rgba(0, 150, 255, 255)",
-#     70: "rgba(0, 100, 255, 255)",
-#     80: "rgba(0, 70, 255, 255)",
-#     90: "rgba(110, 50, 255, 255)",
-#     100: "rgba(200, 0, 255, 255)",
-# }
-
 
 class PsyChart:
     def __init__(self) -> None:
