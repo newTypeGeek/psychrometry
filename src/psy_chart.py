@@ -82,7 +82,12 @@ class PsyChart:
                     showlegend=False,
                     line=line,
                     customdata=np.stack(
-                        [attr_to_val[attr] for attr in schema.ThermoAttribute],
+                        [
+                            attr_to_val[schema.ThermoAttribute.RELATIVE_HUMIDITY],
+                            attr_to_val[schema.ThermoAttribute.WET_BULB],
+                            attr_to_val[schema.ThermoAttribute.DEW_POINT],
+                            attr_to_val[schema.ThermoAttribute.SPECIFIC_ENTHALPY],
+                        ],
                         axis=-1,
                     ),
                     hovertemplate=hovertemplate,
