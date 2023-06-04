@@ -47,7 +47,9 @@ class IsoLine:
 
         return self._filter_physical_data(by, thermo_to_attr)
 
-    def _filter_physical_data(self, iso_by: schema.ThermoAttribute, thermo_to_attr: dict[schema.ThermoAttribute, np.ndarray]):
+    def _filter_physical_data(
+        self, iso_by: schema.ThermoAttribute, thermo_to_attr: dict[schema.ThermoAttribute, np.ndarray]
+    ):
         if iso_by == schema.ThermoAttribute.RELATIVE_HUMIDITY:
             return thermo_to_attr
         else:
