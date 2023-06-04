@@ -46,23 +46,18 @@ class IsoLine:
             schema.ThermoAttribute.SPECIFIC_ENTHALPY: spec_enthalpies,
         }
 
-        return self._filter_data(by, thermo_to_attr)
+        return self._filter_data(thermo_to_attr)
 
-    def _filter_data(self, iso_by: schema.ThermoAttribute, thermo_to_attr: dict[schema.ThermoAttribute, np.ndarray]):
-        if iso_by == schema.ThermoAttribute.RELATIVE_HUMIDITY:
-            is_humidity_ratio_in_range = (
-                thermo_to_attr[schema.ThermoAttribute.HUMIDITY_RATIO] <= self._max_humidity_ratio
-            )
-            for thermo_attr in schema.ThermoAttribute:
-                thermo_to_attr[thermo_attr] = thermo_to_attr[thermo_attr][is_humidity_ratio_in_range]
-            return thermo_to_attr
+    def _filter_data(self, thermo_to_attr: dict[schema.ThermoAttribute, np.ndarray]):
+        is_humidity_ratio_in_range = thermo_to_attr[schema.ThermoAttribute.HUMIDITY_RATIO] <= self._max_humidity_ratio
 
-        else:
-            is_physical = (0 <= thermo_to_attr[schema.ThermoAttribute.RELATIVE_HUMIDITY]) & (
-                thermo_to_attr[schema.ThermoAttribute.RELATIVE_HUMIDITY] <= 100
-            )
+        is_physical = (0 <= thermo_to_attr[schema.ThermoAttribute.RELATIVE_HUMIDITY]) & (
+            thermo_to_attr[schema.ThermoAttribute.RELATIVE_HUMIDITY] <= 100
+        )
 
-            for thermo_attr in schema.ThermoAttribute:
-                thermo_to_attr[thermo_attr] = thermo_to_attr[thermo_attr][is_physical]
+        mask = is_humidity_ratio_in_range & is_physical
 
-            return thermo_to_attr
+        for thermo_attr in schema.ThermoAttribute:
+            thermo_to_attr[thermo_attr] = thermo_to_attr[thermo_attr][mask]
+
+        return thermo_to_attr
