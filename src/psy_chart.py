@@ -23,13 +23,12 @@ class PsyChart:
     def __init__(self) -> None:
         self._fig = go.Figure()
         self._iso_line = iso_line.IsoLine()
-        self._y_range = [0, 0.03]
 
     def render(self) -> go.Figure:
         self._add_iso_lines(
             by=schema.ThermoAttribute.RELATIVE_HUMIDITY, start=1, end=100, step=0.5, iso_display_interval=10
         )
-        self._add_iso_lines(by=schema.ThermoAttribute.WET_BULB, start=-12, end=36, step=0.5, iso_display_interval=5)
+        self._add_iso_lines(by=schema.ThermoAttribute.WET_BULB, start=-12, end=34, step=0.5, iso_display_interval=5)
         self._fig.update_layout(
             autosize=True,
             height=600,
@@ -39,7 +38,6 @@ class PsyChart:
             ),
             yaxis=dict(
                 title=dict(text="Humidity Ratio (kg/kg)", font=dict(size=18)),
-                range=self._y_range,
                 side="right",
             ),
             legend=dict(
