@@ -23,6 +23,7 @@ class PsyChart:
     def __init__(self) -> None:
         self._fig = go.Figure()
         self._iso_line = iso_line.IsoLine()
+        self._y_range = [0, 0.03]
 
     def render(self) -> go.Figure:
         self._add_iso_lines(
@@ -38,7 +39,7 @@ class PsyChart:
             ),
             yaxis=dict(
                 title=dict(text="Humidity Ratio (kg/kg)", font=dict(size=18)),
-                range=[0, 0.03],
+                range=self._y_range,
                 side="right",
             ),
             legend=dict(
@@ -70,6 +71,26 @@ class PsyChart:
             if iso_val % iso_display_interval == 0:
                 line = dict(color="black", width=1, dash="dash")
                 showlegend = True
+
+                # Add annotation to the iso line
+                if by == schema.ThermoAttribute.RELATIVE_HUMIDITY:
+                    x = attr_to_val[schema.ThermoAttribute.DRY_BULB][-1]
+                    y_tmp = attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO][-1]
+
+                    if y_tmp > self._y_range[-1]:
+                        y = self._y_range[-1]
+                    else:
+                        y = y_tmp
+
+                else:
+                    x = attr_to_val[schema.ThermoAttribute.DRY_BULB][0]
+                    y = attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO][0]
+
+                self._fig.add_annotation(
+                    x=x,
+                    y=y,
+                    text=iso_val,
+                )
             else:
                 line = dict(color="rgba(0,0,0,0)")
                 showlegend = False
