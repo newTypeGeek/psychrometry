@@ -79,10 +79,11 @@ class PsyChart:
                     x = attr_to_val[schema.ThermoAttribute.DRY_BULB][0]
                     y = attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO][0]
 
+                unit = "%" if by == schema.ThermoAttribute.RELATIVE_HUMIDITY else "°C"
                 self._fig.add_annotation(
                     x=x,
                     y=y,
-                    text=iso_val,
+                    text=f"{int(iso_val)} {unit}",
                 )
             else:
                 line = dict(color="rgba(0,0,0,0)")
