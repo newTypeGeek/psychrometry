@@ -7,6 +7,7 @@ import schema
 class IsoLine:
     def __init__(self) -> None:
         self._dry_bulbs = np.arange(-10, 50 + 0.1, 0.1)
+        self._max_humidity_ratio = 0.03
         self._num_data_points = len(self._dry_bulbs)
 
     def get_iso_line_thermo_attrs(
@@ -45,13 +46,17 @@ class IsoLine:
             schema.ThermoAttribute.SPECIFIC_ENTHALPY: spec_enthalpies,
         }
 
-        return self._filter_physical_data(by, thermo_to_attr)
+        return self._filter_data(by, thermo_to_attr)
 
-    def _filter_physical_data(
-        self, iso_by: schema.ThermoAttribute, thermo_to_attr: dict[schema.ThermoAttribute, np.ndarray]
-    ):
+    def _filter_data(self, iso_by: schema.ThermoAttribute, thermo_to_attr: dict[schema.ThermoAttribute, np.ndarray]):
         if iso_by == schema.ThermoAttribute.RELATIVE_HUMIDITY:
+            is_humidity_ratio_in_range = (
+                thermo_to_attr[schema.ThermoAttribute.HUMIDITY_RATIO] <= self._max_humidity_ratio
+            )
+            for thermo_attr in schema.ThermoAttribute:
+                thermo_to_attr[thermo_attr] = thermo_to_attr[thermo_attr][is_humidity_ratio_in_range]
             return thermo_to_attr
+
         else:
             is_physical = (0 <= thermo_to_attr[schema.ThermoAttribute.RELATIVE_HUMIDITY]) & (
                 thermo_to_attr[schema.ThermoAttribute.RELATIVE_HUMIDITY] <= 100
