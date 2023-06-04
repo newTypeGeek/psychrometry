@@ -75,12 +75,7 @@ class PsyChart:
                 # Add annotation to the iso line
                 if by == schema.ThermoAttribute.RELATIVE_HUMIDITY:
                     x = attr_to_val[schema.ThermoAttribute.DRY_BULB][-1]
-                    y_tmp = attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO][-1]
-
-                    if y_tmp > self._y_range[-1]:
-                        y = self._y_range[-1]
-                    else:
-                        y = y_tmp
+                    y = attr_to_val[schema.ThermoAttribute.HUMIDITY_RATIO][-1]
 
                 else:
                     x = attr_to_val[schema.ThermoAttribute.DRY_BULB][0]
